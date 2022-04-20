@@ -24,6 +24,7 @@ module.exports = {
     '../stories/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   addons: [
+    'storybook-dark-mode',
     '@storybook/addon-links',
     '@storybook/addon-controls',
     '@storybook/addon-docs',

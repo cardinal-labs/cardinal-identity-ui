@@ -19,4 +19,11 @@ export const parameters = {
   previewTabs: {
     'storybook/docs/panel': { index: -1 },
   },
+  darkMode: {
+    dark: {
+      ...themes.dark, // copy existing values
+      appContentBg: '#202020', // override main story view frame
+      barBg: '#202020', // override top toolbar
+    },
+  },
 }
