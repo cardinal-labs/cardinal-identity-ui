@@ -243,260 +243,262 @@ export const NameEntryClaim = ({
 
   return (
     <Wrapper>
-      <Instruction>
-        {appName ? `${appName} uses` : 'Use'} Cardinal to link your Twitter
-        identity to your <strong>Solana</strong> address.
-      </Instruction>
-      {(!wallet?.publicKey || !connection) && (
-        <Alert
-          style={{ marginBottom: '20px' }}
-          message={
-            <>
-              <div>Connect wallet to continue</div>
-            </>
-          }
-          type="warning"
-          showIcon
-        />
-      )}
-      {reverseEntryData?.parsed.entryName && (
-        <Alert
-          style={{ marginBottom: '20px', width: '100%' }}
-          message={
-            <>
+      <>
+        <Instruction>
+          {appName ? `${appName} uses` : 'Use'} Cardinal to link your Twitter
+          identity to your <strong>Solana</strong> address.
+        </Instruction>
+        {(!wallet?.publicKey || !connection) && (
+          <Alert
+            style={{ marginBottom: '20px' }}
+            message={
+              <>
+                <div>Connect wallet to continue</div>
+              </>
+            }
+            type="warning"
+            showIcon
+          />
+        )}
+        {reverseEntryData?.parsed.entryName && (
+          <Alert
+            style={{ marginBottom: '20px', width: '100%' }}
+            message={
+              <>
+                <div>
+                  Your address is linked to{' '}
+                  {formatTwitterLink(
+                    reverseEntryData?.parsed.entryName as string
+                  )}
+                  . You can change your Twitter handle by linking a new profile.
+                </div>
+              </>
+            }
+            type="info"
+            showIcon
+          />
+        )}
+        <DetailsWrapper>
+          <StepDetail
+            disabled={!wallet?.publicKey || !connection}
+            icon={<Megaphone />}
+            title="Tweet!"
+            description={
+              <>
+                <div>Tweet your public key</div>
+                <PostTweet
+                  wallet={wallet}
+                  appName={appName}
+                  appTwitter={appTwitter}
+                  disabled={false}
+                  callback={() => setTweetSent(true)}
+                  cluster={cluster}
+                />
+              </>
+            }
+          />
+          <StepDetail
+            disabled={!tweetSent}
+            icon={<Link />}
+            title="Paste the URL of the tweet"
+            description={
               <div>
-                Your address is linked to{' '}
-                {formatTwitterLink(
-                  reverseEntryData?.parsed.entryName as string
-                )}
-                . You can change your Twitter handle by linking a new profile.
+                <LabeledInput
+                  disabled={!tweetSent}
+                  label="Tweet"
+                  name="tweet"
+                  onChange={(e) => setTweetUrl(e.target.value)}
+                />
               </div>
-            </>
-          }
-          type="info"
-          showIcon
-        />
-      )}
-      <DetailsWrapper>
-        <StepDetail
-          disabled={!wallet?.publicKey || !connection}
-          icon={<Megaphone />}
-          title="Tweet!"
-          description={
-            <>
-              <div>Tweet your public key</div>
-              <PostTweet
-                wallet={wallet}
-                appName={appName}
-                appTwitter={appTwitter}
-                disabled={false}
-                callback={() => setTweetSent(true)}
-                cluster={cluster}
-              />
-            </>
-          }
-        />
-        <StepDetail
-          disabled={!tweetSent}
-          icon={<Link />}
-          title="Paste the URL of the tweet"
-          description={
-            <div>
-              <LabeledInput
-                disabled={!tweetSent}
-                label="Tweet"
-                name="tweet"
-                onChange={(e) => setTweetUrl(e.target.value)}
-              />
-            </div>
-          }
-        />
-        <StepDetail
-          disabled={!handle}
-          icon={<Verified />}
-          title="Claim your handle"
-          description={
-            <>
-              <div>
-                You will receive a non-tradeable NFT to prove you own your
-                Twitter handle.
-              </div>
-              {handle && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '20px',
-                    paddingTop: '20px',
-                  }}
-                >
-                  <TwitterHandleNFT
-                    handle={handle}
-                    cluster={cluster}
-                    dev={dev}
-                  />
+            }
+          />
+          <StepDetail
+            disabled={!handle}
+            icon={<Verified />}
+            title="Claim your handle"
+            description={
+              <>
+                <div>
+                  You will receive a non-tradeable NFT to prove you own your
+                  Twitter handle.
+                </div>
+                {handle && (
                   <div
                     style={{
-                      padding: '10px',
-                      maxWidth: 'calc(100% - 120px - 20px)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '20px',
+                      paddingTop: '20px',
                     }}
                   >
-                    {claimRequest && claimRequest.parsed.isApproved ? (
-                      <StyledAlert>
-                        <Alert
-                          style={{
-                            margin: '10px 0px',
-                            height: 'auto',
-                            wordBreak: 'break-word',
-                          }}
-                          message={
-                            <>
-                              <div>
-                                Verified ownership of{' '}
-                                {formatTwitterLink(handle)}
-                              </div>
-                            </>
-                          }
-                          type="success"
-                          showIcon
-                        />
-                      </StyledAlert>
-                    ) : loadingVerify || loadingClaimRequest ? (
-                      <div style={{ padding: '10px' }}>
-                        <LoadingSpinner fill="#000" />
-                      </div>
-                    ) : (
-                      <StyledAlert>
-                        <Alert
-                          style={{
-                            marginTop: '10px',
-                            height: 'auto',
-                            wordBreak: 'break-word',
-                          }}
-                          message={
-                            <>
-                              <div>{verifyError}</div>
-                            </>
-                          }
-                          type="error"
-                          showIcon
-                        />
-                        <ButtonWrapper>
-                          <ButtonLight onClick={() => verifyTwitter()}>
-                            Retry
-                          </ButtonLight>
-                        </ButtonWrapper>
-                      </StyledAlert>
-                    )}
-                    {claimRequest &&
-                      claimRequest.parsed.isApproved &&
-                      !claimed &&
-                      (loadingNameEntry || loadingRevoke ? (
+                    <TwitterHandleNFT
+                      handle={handle}
+                      cluster={cluster}
+                      dev={dev}
+                    />
+                    <div
+                      style={{
+                        padding: '10px',
+                        maxWidth: 'calc(100% - 120px - 20px)',
+                      }}
+                    >
+                      {claimRequest && claimRequest.parsed.isApproved ? (
+                        <StyledAlert>
+                          <Alert
+                            style={{
+                              margin: '10px 0px',
+                              height: 'auto',
+                              wordBreak: 'break-word',
+                            }}
+                            message={
+                              <>
+                                <div>
+                                  Verified ownership of{' '}
+                                  {formatTwitterLink(handle)}
+                                </div>
+                              </>
+                            }
+                            type="success"
+                            showIcon
+                          />
+                        </StyledAlert>
+                      ) : loadingVerify || loadingClaimRequest ? (
                         <div style={{ padding: '10px' }}>
                           <LoadingSpinner fill="#000" />
                         </div>
                       ) : (
-                        alreadyOwned && (
-                          <>
-                            <Alert
-                              style={{
-                                marginBottom: '10px',
-                                height: 'auto',
-                                wordBreak: 'break-word',
-                              }}
-                              message={
+                        <StyledAlert>
+                          <Alert
+                            style={{
+                              marginTop: '10px',
+                              height: 'auto',
+                              wordBreak: 'break-word',
+                            }}
+                            message={
+                              <>
+                                <div>{verifyError}</div>
+                              </>
+                            }
+                            type="error"
+                            showIcon
+                          />
+                          <ButtonWrapper>
+                            <ButtonLight onClick={() => verifyTwitter()}>
+                              Retry
+                            </ButtonLight>
+                          </ButtonWrapper>
+                        </StyledAlert>
+                      )}
+                      {claimRequest &&
+                        claimRequest.parsed.isApproved &&
+                        !claimed &&
+                        (loadingNameEntry || loadingRevoke ? (
+                          <div style={{ padding: '10px' }}>
+                            <LoadingSpinner fill="#000" />
+                          </div>
+                        ) : (
+                          alreadyOwned && (
+                            <>
+                              <Alert
+                                style={{
+                                  marginBottom: '10px',
+                                  height: 'auto',
+                                  wordBreak: 'break-word',
+                                }}
+                                message={
+                                  <>
+                                    <div>
+                                      Owned by{' '}
+                                      {formatShortAddress(nameEntryData?.owner)}
+                                    </div>
+                                  </>
+                                }
+                                type="warning"
+                                showIcon
+                              />
+                              {nameEntryData?.owner?.toString() ===
+                              wallet?.publicKey?.toString() ? (
                                 <>
                                   <div>
-                                    Owned by{' '}
-                                    {formatShortAddress(nameEntryData?.owner)}
+                                    You already own this handle! If you want to
+                                    set it as your default, click below.
                                   </div>
+                                  <ButtonWrapper>
+                                    <ButtonLight onClick={() => setDefault()}>
+                                      Set Default
+                                    </ButtonLight>
+                                  </ButtonWrapper>
                                 </>
-                              }
-                              type="warning"
-                              showIcon
-                            />
-                            {nameEntryData?.owner?.toString() ===
-                            wallet?.publicKey?.toString() ? (
-                              <>
-                                <div>
-                                  You already own this handle! If you want to
-                                  set it as your default, click below.
-                                </div>
-                                <ButtonWrapper>
-                                  <ButtonLight onClick={() => setDefault()}>
-                                    Set Default
-                                  </ButtonLight>
-                                </ButtonWrapper>
-                              </>
-                            ) : (
-                              <>
-                                <div>
-                                  If you wish to continue, you will revoke this
-                                  handle from them.
-                                </div>
-                                <ButtonWrapper>
-                                  <ButtonLight onClick={() => revokeHandle()}>
-                                    Revoke
-                                  </ButtonLight>
-                                </ButtonWrapper>
-                              </>
-                            )}
-                            {ownedError && (
-                              <StyledAlert>
-                                <Alert
-                                  style={{
-                                    marginTop: '10px',
-                                    height: 'auto',
-                                    wordBreak: 'break-word',
-                                  }}
-                                  message={
-                                    <>
-                                      <div>{ownedError}</div>
-                                    </>
-                                  }
-                                  type="error"
-                                  showIcon
-                                />
-                              </StyledAlert>
-                            )}
-                          </>
-                        )
-                      ))}
-                    {claimError && (
-                      <StyledAlert>
-                        <Alert
-                          style={{ marginTop: '10px', height: 'auto' }}
-                          message={
-                            <>
-                              <div>{claimError}</div>
+                              ) : (
+                                <>
+                                  <div>
+                                    If you wish to continue, you will revoke
+                                    this handle from them.
+                                  </div>
+                                  <ButtonWrapper>
+                                    <ButtonLight onClick={() => revokeHandle()}>
+                                      Revoke
+                                    </ButtonLight>
+                                  </ButtonWrapper>
+                                </>
+                              )}
+                              {ownedError && (
+                                <StyledAlert>
+                                  <Alert
+                                    style={{
+                                      marginTop: '10px',
+                                      height: 'auto',
+                                      wordBreak: 'break-word',
+                                    }}
+                                    message={
+                                      <>
+                                        <div>{ownedError}</div>
+                                      </>
+                                    }
+                                    type="error"
+                                    showIcon
+                                  />
+                                </StyledAlert>
+                              )}
                             </>
-                          }
-                          type="error"
-                          showIcon
-                        />
-                      </StyledAlert>
-                    )}
+                          )
+                        ))}
+                      {claimError && (
+                        <StyledAlert>
+                          <Alert
+                            style={{ marginTop: '10px', height: 'auto' }}
+                            message={
+                              <>
+                                <div>{claimError}</div>
+                              </>
+                            }
+                            type="error"
+                            showIcon
+                          />
+                        </StyledAlert>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
+                )}
+              </>
+            }
+          />
+        </DetailsWrapper>
+        <ButtonWithFooter
+          loading={loadingClaim}
+          complete={claimed}
+          disabled={
+            !claimRequest ||
+            !claimRequest.parsed.isApproved ||
+            loadingNameEntry ||
+            alreadyOwned
           }
-        />
-      </DetailsWrapper>
-      <ButtonWithFooter
-        loading={loadingClaim}
-        complete={claimed}
-        disabled={
-          !claimRequest ||
-          !claimRequest.parsed.isApproved ||
-          loadingNameEntry ||
-          alreadyOwned
-        }
-        onClick={handleClaim}
-        footer={<PoweredByFooter />}
-      >
-        Claim {handle && `@${handle}`}
-      </ButtonWithFooter>
+          onClick={handleClaim}
+          footer={<PoweredByFooter />}
+        >
+          Claim {handle && `@${handle}`}
+        </ButtonWithFooter>
+      </>
     </Wrapper>
   )
 }
