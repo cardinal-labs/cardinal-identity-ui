@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { useEnvironmentCtx } from "providers/EnvironmentProvider";
+import styled from '@emotion/styled'
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui'
+import { useEnvironmentCtx } from 'providers/EnvironmentProvider'
 
 export const StyledHeader = styled.div`
   z-index: 100;
@@ -55,7 +55,7 @@ export const StyledHeader = styled.div`
       font-size: 10px;
       font-style: italic;
       position: absolute;
-      bottom: 5px;
+      bottom: -5px;
       right: -35px;
       background: rgba(255, 255, 255, 0.3);
       border-radius: 6px;
@@ -107,7 +107,7 @@ export const StyledHeader = styled.div`
       }
     }
   }
-`;
+`
 
 const WalletButton = styled(WalletMultiButton)`
   color: rgba(255, 255, 255, 0.8);
@@ -121,17 +121,16 @@ const WalletButton = styled(WalletMultiButton)`
     background: none !important;
     background-color: none !important;
   }
-`;
+`
 
 export const Header = ({ title }: { title?: string }) => {
-  const { environment } = useEnvironmentCtx();
-  console.log(environment);
+  const { environment } = useEnvironmentCtx()
   return (
     <StyledHeader>
       <div className="left">
         <div className="title">
           <img
-            style={{ position: "relative", top: "10px" }}
+            style={{ position: 'relative', top: '10px' }}
             src="/assets/cardinal-titled.png"
             alt="Cardinal titled"
           />
@@ -140,31 +139,20 @@ export const Header = ({ title }: { title?: string }) => {
       </div>
       {title && <div className="center">{title}</div>}
       <div className="right">
-        {environment.label !== "mainnet" && (
+        {environment.label !== 'mainnet' && (
           <div
             style={{
-              color: "rgb(101,119,134,1)",
-              padding: "4px 6px",
-              background: "#DDD",
-              borderRadius: "5px",
+              color: 'rgb(101,119,134,1)',
+              padding: '4px 6px',
+              background: '#DDD',
+              borderRadius: '5px',
             }}
           >
             {environment.label}
           </div>
         )}
         <WalletButton />
-        {/* <WalletMultiButton
-          style={{
-            color: "rgba(255,255,255,0.8)",
-            fontSize: "14px",
-            zIndex: 10,
-            height: "38px",
-            border: "none",
-            background: "none",
-            backgroundColor: "none !important",
-          }}
-        /> */}
       </div>
     </StyledHeader>
-  );
-};
+  )
+}
