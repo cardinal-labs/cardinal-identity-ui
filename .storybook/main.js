@@ -63,24 +63,6 @@ module.exports = {
   },
   webpackFinal: async (config) => {
     return merge(config, {
-      // module: {
-      //   rules: [
-      //     ...config.module.rules,
-      //     {
-      //       test: /\.css$/,
-      //       use: [
-      //         {
-      //           loader: 'postcss-loader',
-      //           options: {
-      //             ident: 'postcss',
-      //             plugins: [require('tailwindcss'), require('autoprefixer')],
-      //           },
-      //         },
-      //       ],
-      //       include: path.resolve(__dirname, '../'),
-      //     },
-      //   ],
-      // },
       resolve: {
         fallback: {
           fs: false,
