@@ -142,7 +142,6 @@ export const Profile: React.FC<Props> = ({ address }: Props) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '4px',
             justifyContent: 'center',
             textAlign: 'center',
           }}

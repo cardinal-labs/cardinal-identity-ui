@@ -1,10 +1,10 @@
-import styled from "@emotion/styled";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
-import { Header } from "common/Header";
-import { PlaceholderProfile, Profile } from "components/Profile";
-import { useRouter } from "next/router";
-import { useMemo } from "react";
+import styled from '@emotion/styled'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { PublicKey } from '@solana/web3.js'
+import { Header } from 'common/Header'
+import { PlaceholderProfile, Profile } from 'components/Profile'
+import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 
 export const TwitterBackground = styled.div`
   z-index: -1;
@@ -14,16 +14,16 @@ export const TwitterBackground = styled.div`
   position: fixed;
   background: #1da1f2;
   //   background: linear-gradient(-45deg, #23a6d5, #1da1f2);
-`;
+`
 
 const TwitterClaim = () => {
-  const wallet = useWallet();
-  const router = useRouter();
+  const wallet = useWallet()
+  const router = useRouter()
 
-  const { addressId } = router.query;
-  let address;
+  const { addressId } = router.query
+  let address
   try {
-    address = new PublicKey(addressId || "");
+    address = new PublicKey(addressId || '')
   } catch (err) {}
 
   useMemo(() => {
@@ -33,20 +33,19 @@ const TwitterClaim = () => {
     ) {
       router.push(`/${wallet?.publicKey?.toString()}`, undefined, {
         shallow: true,
-      });
+      })
     }
-  }, [wallet.connected, wallet.publicKey, addressId, router]);
+  }, [wallet.connected, wallet.publicKey, addressId, router])
 
   return (
     <>
       <Header />
-      <div style={{ marginTop: "45vh", transform: "translateY(-50%)" }}>
+      <div style={{ marginTop: '45vh', transform: 'translateY(-50%)' }}>
         {address ? (
           <div
             style={{
-              padding: "20px",
-              width: "320px",
-              margin: "0px auto",
+              width: '320px',
+              margin: '0px auto',
             }}
           >
             <Profile address={address} />
@@ -54,9 +53,9 @@ const TwitterClaim = () => {
         ) : (
           <div
             style={{
-              padding: "20px",
-              width: "320px",
-              margin: "0px auto",
+              padding: '20px',
+              width: '320px',
+              margin: '0px auto',
             }}
           >
             <PlaceholderProfile />
@@ -65,7 +64,7 @@ const TwitterClaim = () => {
       </div>
       <TwitterBackground />
     </>
-  );
-};
+  )
+}
 
-export default TwitterClaim;
+export default TwitterClaim
