@@ -1,5 +1,7 @@
 import '../pages/styles.css'
 import * as NextImage from 'next/image'
+import { themes } from '@storybook/theming'
+import { DocsContainer } from './components/DocContainer'
 
 const OriginalNextImage = NextImage.default
 
@@ -15,6 +17,10 @@ export const parameters = {
       color: /(background|color)$/i,
       date: /Date$/,
     },
+  },
+  viewMode: 'docs',
+  docs: {
+    container: DocsContainer,
   },
   previewTabs: {
     'storybook/docs/panel': { index: -1 },
