@@ -1,13 +1,13 @@
-import styled from "@emotion/styled";
-import type { Wallet } from "@saberhq/solana-contrib";
-import type { Connection } from "@solana/web3.js";
-import { useEffect, useState } from "react";
+import styled from '@emotion/styled'
+import type { Wallet } from '@saberhq/solana-contrib'
+import type { Connection } from '@solana/web3.js'
+import { useEffect, useState } from 'react'
 
-import { Alert } from "../common/Alert";
-import { LoadingSpinner } from "../common/LoadingSpinner";
-import { useClaimRequest } from "../hooks/useClaimRequest";
-import { useNameEntryData } from "../hooks/useNameEntryData";
-import { useReverseEntry } from "../hooks/useReverseEntry";
+import { Alert } from '../common/Alert'
+import { LoadingSpinner } from '../common/LoadingSpinner'
+import { useClaimRequest } from '../hooks/useClaimRequest'
+import { useNameEntryData } from '../hooks/useNameEntryData'
+import { useReverseEntry } from '../hooks/useReverseEntry'
 import {
   apiBase,
   claimEntry,
@@ -15,81 +15,81 @@ import {
   revokeAndClaim,
   setReverseEntry,
   tryGetNameEntry,
-} from "../utils/api";
-import { formatShortAddress, formatTwitterLink } from "../utils/format";
-import { ButtonWithFooter } from "./ButtonWithFooter";
-import { Link, Megaphone, Verified } from "./icons";
-import { LabeledInput } from "./LabeledInput";
-import { PostTweet } from "./PostTweet";
-import { PoweredByFooter } from "./PoweredByFooter";
-import { StepDetail } from "./StepDetail";
-import { TwitterHandleNFT } from "./TwitterHandleNFT";
+} from '../utils/api'
+import { formatShortAddress, formatTwitterLink } from '../utils/format'
+import { ButtonWithFooter } from './ButtonWithFooter'
+import { Link, Megaphone, Verified } from './icons'
+import { LabeledInput } from './LabeledInput'
+import { PostTweet } from './PostTweet'
+import { PoweredByFooter } from './PoweredByFooter'
+import { StepDetail } from './StepDetail'
+import { TwitterHandleNFT } from './TwitterHandleNFT'
 
 const handleFromTweetUrl = (raw: string | undefined): string | undefined => {
-  if (!raw) return undefined;
-  return raw.split("/")[3];
-};
+  if (!raw) return undefined
+  return raw.split('/')[3]
+}
 
 const tweetIdFromTweetUrl = (raw: string | undefined): string | undefined => {
-  if (!raw) return undefined;
-  return raw.split("/")[5]?.split("?")[0];
-};
+  if (!raw) return undefined
+  return raw.split('/')[5]?.split('?')[0]
+}
 
 export const NameEntryClaim = ({
   dev = false,
-  cluster = "mainnet",
+  cluster = 'mainnet',
   connection,
   wallet,
-  namespaceName = "twitter",
+  namespaceName = 'twitter',
   appName,
   appTwitter,
   notify,
   onComplete,
 }: {
-  dev?: boolean;
-  cluster?: string;
-  connection: Connection | null;
-  wallet: Wallet | null;
-  namespaceName?: string;
-  appName?: string;
-  appTwitter?: string;
-  notify?: (arg: { message?: string; txid?: string }) => void;
-  onComplete?: (arg0: string) => void;
+  dev?: boolean
+  cluster?: string
+  connection: Connection | null
+  wallet: Wallet | null
+  namespaceName?: string
+  appName?: string
+  appTwitter?: string
+  notify?: (arg: { message?: string; txid?: string }) => void
+  onComplete?: (arg0: string) => void
 }) => {
   const [verifyError, setVerifyError] = useState<React.ReactNode | undefined>(
     undefined
-  );
+  )
   const [ownedError, setOwnedError] = useState<React.ReactNode | undefined>(
     undefined
-  );
+  )
   const [claimError, setClaimError] = useState<React.ReactNode | undefined>(
     undefined
-  );
-  const [loadingVerify, setLoadingVerify] = useState(false);
-  const [loadingRevoke, setLoadingRevoke] = useState(false);
-  const [loadingClaim, setLoadingClaim] = useState(false);
+  )
+  const [loadingVerify, setLoadingVerify] = useState(false)
+  const [loadingRevoke, setLoadingRevoke] = useState(false)
+  const [loadingClaim, setLoadingClaim] = useState(false)
 
-  const [tweetSent, setTweetSent] = useState(false);
-  const [tweetUrl, setTweetUrl] = useState<string | undefined>(undefined);
-  const handle = handleFromTweetUrl(tweetUrl);
-  const tweetId = tweetIdFromTweetUrl(tweetUrl);
-  const [claimed, setClaimed] = useState(false);
+  const [tweetSent, setTweetSent] = useState(false)
+  const [tweetUrl, setTweetUrl] = useState<string | undefined>(undefined)
+  const handle = handleFromTweetUrl(tweetUrl)
+  const tweetId = tweetIdFromTweetUrl(tweetUrl)
+  const [claimed, setClaimed] = useState(false)
 
   const { reverseEntryData, getReverseEntryData } = useReverseEntry(
     connection,
     wallet?.publicKey
-  );
+  )
 
   const { nameEntryData, loadingNameEntry, refreshNameEntryData } =
-    useNameEntryData(connection, namespaceName, handle);
+    useNameEntryData(connection, namespaceName, handle)
 
   const { claimRequest, loadingClaimRequest, getClaimRequestData } =
-    useClaimRequest(connection, namespaceName, handle, wallet?.publicKey);
+    useClaimRequest(connection, namespaceName, handle, wallet?.publicKey)
 
   const verifyTwitter = async () => {
-    setLoadingVerify(true);
-    setVerifyError(undefined);
-    setOwnedError(undefined);
+    setLoadingVerify(true)
+    setVerifyError(undefined)
+    setOwnedError(undefined)
     try {
       const response = await fetch(
         `${apiBase(
@@ -97,20 +97,20 @@ export const NameEntryClaim = ({
         )}/twitter/approve?tweetId=${tweetId}&publicKey=${wallet?.publicKey.toString()}&handle=${handle}${
           cluster && `&cluster=${cluster}`
         }`
-      );
-      const json = await response.json();
-      if (response.status !== 200) throw new Error(json.error);
+      )
+      const json = await response.json()
+      if (response.status !== 200) throw new Error(json.error)
     } catch (e) {
-      setVerifyError(`Failed to approve tweet url: ${e}`);
+      setVerifyError(`Failed to approve tweet url: ${e}`)
     } finally {
-      await getClaimRequestData();
-      setLoadingVerify(false);
+      await getClaimRequestData()
+      setLoadingVerify(false)
     }
-  };
+  }
 
   const revokeHandle = async () => {
-    setLoadingRevoke(true);
-    setOwnedError(undefined);
+    setLoadingRevoke(true)
+    setOwnedError(undefined)
     try {
       const response = await fetch(
         `${apiBase(
@@ -118,42 +118,42 @@ export const NameEntryClaim = ({
         )}/twitter/revoke?tweetId=${tweetId}&publicKey=${wallet?.publicKey.toString()}&handle=${handle}${
           cluster && `&cluster=${cluster}`
         }`
-      );
-      await refreshNameEntryData();
-      const json = await response.json();
-      if (response.status !== 200) throw new Error(json.error);
+      )
+      await refreshNameEntryData()
+      const json = await response.json()
+      if (response.status !== 200) throw new Error(json.error)
     } catch (e) {
-      setOwnedError(`Failed to revoke tweet url: ${e}`);
+      setOwnedError(`Failed to revoke tweet url: ${e}`)
     } finally {
-      setLoadingRevoke(false);
+      setLoadingRevoke(false)
     }
-  };
+  }
 
   const setDefault = async () => {
-    setLoadingRevoke(true);
-    setOwnedError(undefined);
+    setLoadingRevoke(true)
+    setOwnedError(undefined)
     try {
-      if (!handle) throw new Error("Handle not found");
-      if (!connection) throw new Error("Connection not found");
-      if (!wallet) throw new Error("Wallet not connected");
-      console.log("Setting reverse entry entry:", handle);
+      if (!handle) throw new Error('Handle not found')
+      if (!connection) throw new Error('Connection not found')
+      if (!wallet) throw new Error('Wallet not connected')
+      console.log('Setting reverse entry entry:', handle)
       const txid = await setReverseEntry(
         connection,
         wallet,
         namespaceName,
         handle,
         nameEntryData?.nameEntry.parsed.mint!
-      );
-      notify && notify({ message: "Set default successful", txid });
-      setClaimed(true);
-      onComplete && onComplete(handle);
+      )
+      notify && notify({ message: 'Set default successful', txid })
+      setClaimed(true)
+      onComplete && onComplete(handle)
     } catch (e) {
-      console.log(e);
-      setOwnedError(`Failed to set default handle: ${e}`);
+      console.log(e)
+      setOwnedError(`Failed to set default handle: ${e}`)
     } finally {
-      setLoadingRevoke(false);
+      setLoadingRevoke(false)
     }
-  };
+  }
 
   useEffect(() => {
     if (
@@ -161,24 +161,24 @@ export const NameEntryClaim = ({
       tweetSent &&
       (!claimRequest || !claimRequest?.parsed?.isApproved)
     ) {
-      verifyTwitter();
+      verifyTwitter()
     }
-  }, [wallet, tweetUrl, handle, tweetSent, tweetId, claimRequest]);
+  }, [wallet, tweetUrl, handle, tweetSent, tweetId, claimRequest])
 
   const handleClaim = async () => {
     try {
-      if (!handle) throw new Error("Handle not found");
-      if (!connection) throw new Error("Connection not found");
-      if (!wallet) throw new Error("Wallet not connected");
-      setLoadingClaim(true);
-      setClaimError(undefined);
+      if (!handle) throw new Error('Handle not found')
+      if (!connection) throw new Error('Connection not found')
+      if (!wallet) throw new Error('Wallet not connected')
+      setLoadingClaim(true)
+      setClaimError(undefined)
       const checkNameEntry = await tryGetNameEntry(
         connection,
         namespaceName,
         handle
-      );
+      )
       if (!checkNameEntry) {
-        console.log("Initializing and claiming entry:", handle);
+        console.log('Initializing and claiming entry:', handle)
         const txid = await initAndClaimEntry(
           cluster,
           connection,
@@ -186,12 +186,12 @@ export const NameEntryClaim = ({
           namespaceName,
           handle,
           null
-        );
-        notify && notify({ message: "Claim successful", txid });
-        setClaimed(true);
-        onComplete && onComplete(handle);
+        )
+        notify && notify({ message: 'Claim successful', txid })
+        setClaimed(true)
+        onComplete && onComplete(handle)
       } else if (checkNameEntry && !checkNameEntry.parsed.isClaimed) {
-        console.log("Claiming entry:", handle);
+        console.log('Claiming entry:', handle)
         const txid = await claimEntry(
           connection,
           wallet,
@@ -199,12 +199,12 @@ export const NameEntryClaim = ({
           handle,
           checkNameEntry.parsed.mint,
           null
-        );
-        notify && notify({ message: "Claim successful", txid });
-        setClaimed(true);
-        onComplete && onComplete(handle);
+        )
+        notify && notify({ message: 'Claim successful', txid })
+        setClaimed(true)
+        onComplete && onComplete(handle)
       } else {
-        console.log("Revoking and claiming entry:", handle);
+        console.log('Revoking and claiming entry:', handle)
         const txid = await revokeAndClaim(
           cluster,
           connection,
@@ -216,40 +216,40 @@ export const NameEntryClaim = ({
           claimRequest!.pubkey,
           checkNameEntry.parsed.mint,
           nameEntryData!.owner!
-        );
-        notify && notify({ message: "Init and claim successful", txid });
-        setClaimed(true);
-        onComplete && onComplete(handle);
+        )
+        notify && notify({ message: 'Init and claim successful', txid })
+        setClaimed(true)
+        onComplete && onComplete(handle)
       }
     } catch (e: any) {
-      if (e?.message.includes("0x1")) {
-        setClaimError(<>Not enough sol!</>);
+      if (e?.message.includes('0x1')) {
+        setClaimError(<>Not enough sol!</>)
       } else {
-        setClaimError(<>Failed to claim: {e?.message}</>);
+        setClaimError(<>Failed to claim: {e?.message}</>)
       }
     } finally {
-      refreshNameEntryData();
-      getReverseEntryData();
-      setLoadingClaim(false);
+      refreshNameEntryData()
+      getReverseEntryData()
+      setLoadingClaim(false)
     }
-  };
+  }
 
   const alreadyOwned =
     nameEntryData &&
     nameEntryData.owner?.toString() &&
     !nameEntryData.isOwnerPDA
       ? true
-      : false;
+      : false
 
   return (
     <Wrapper>
       <Instruction>
-        {appName ? `${appName} uses` : "Use"} Cardinal to link your Twitter
+        {appName ? `${appName} uses` : 'Use'} Cardinal to link your Twitter
         identity to your <strong>Solana</strong> address.
       </Instruction>
       {(!wallet?.publicKey || !connection) && (
         <Alert
-          style={{ marginBottom: "20px" }}
+          style={{ marginBottom: '20px' }}
           message={
             <>
               <div>Connect wallet to continue</div>
@@ -261,11 +261,11 @@ export const NameEntryClaim = ({
       )}
       {reverseEntryData?.parsed.entryName && (
         <Alert
-          style={{ marginBottom: "20px", width: "100%" }}
+          style={{ marginBottom: '20px', width: '100%' }}
           message={
             <>
               <div>
-                Your address is linked to{" "}
+                Your address is linked to{' '}
                 {formatTwitterLink(
                   reverseEntryData?.parsed.entryName as string
                 )}
@@ -324,10 +324,10 @@ export const NameEntryClaim = ({
               {handle && (
                 <div
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "20px",
-                    paddingTop: "20px",
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '20px',
+                    paddingTop: '20px',
                   }}
                 >
                   <TwitterHandleNFT
@@ -337,22 +337,22 @@ export const NameEntryClaim = ({
                   />
                   <div
                     style={{
-                      padding: "10px",
-                      maxWidth: "calc(100% - 120px - 20px)",
+                      padding: '10px',
+                      maxWidth: 'calc(100% - 120px - 20px)',
                     }}
                   >
                     {claimRequest && claimRequest.parsed.isApproved ? (
                       <StyledAlert>
                         <Alert
                           style={{
-                            margin: "10px 0px",
-                            height: "auto",
-                            wordBreak: "break-word",
+                            margin: '10px 0px',
+                            height: 'auto',
+                            wordBreak: 'break-word',
                           }}
                           message={
                             <>
                               <div>
-                                Verified ownership of{" "}
+                                Verified ownership of{' '}
                                 {formatTwitterLink(handle)}
                               </div>
                             </>
@@ -362,16 +362,16 @@ export const NameEntryClaim = ({
                         />
                       </StyledAlert>
                     ) : loadingVerify || loadingClaimRequest ? (
-                      <div style={{ padding: "10px" }}>
+                      <div style={{ padding: '10px' }}>
                         <LoadingSpinner fill="#000" />
                       </div>
                     ) : (
                       <StyledAlert>
                         <Alert
                           style={{
-                            marginTop: "10px",
-                            height: "auto",
-                            wordBreak: "break-word",
+                            marginTop: '10px',
+                            height: 'auto',
+                            wordBreak: 'break-word',
                           }}
                           message={
                             <>
@@ -392,7 +392,7 @@ export const NameEntryClaim = ({
                       claimRequest.parsed.isApproved &&
                       !claimed &&
                       (loadingNameEntry || loadingRevoke ? (
-                        <div style={{ padding: "10px" }}>
+                        <div style={{ padding: '10px' }}>
                           <LoadingSpinner fill="#000" />
                         </div>
                       ) : (
@@ -400,14 +400,14 @@ export const NameEntryClaim = ({
                           <>
                             <Alert
                               style={{
-                                marginBottom: "10px",
-                                height: "auto",
-                                wordBreak: "break-word",
+                                marginBottom: '10px',
+                                height: 'auto',
+                                wordBreak: 'break-word',
                               }}
                               message={
                                 <>
                                   <div>
-                                    Owned by{" "}
+                                    Owned by{' '}
                                     {formatShortAddress(nameEntryData?.owner)}
                                   </div>
                                 </>
@@ -445,9 +445,9 @@ export const NameEntryClaim = ({
                               <StyledAlert>
                                 <Alert
                                   style={{
-                                    marginTop: "10px",
-                                    height: "auto",
-                                    wordBreak: "break-word",
+                                    marginTop: '10px',
+                                    height: 'auto',
+                                    wordBreak: 'break-word',
                                   }}
                                   message={
                                     <>
@@ -465,7 +465,7 @@ export const NameEntryClaim = ({
                     {claimError && (
                       <StyledAlert>
                         <Alert
-                          style={{ marginTop: "10px", height: "auto" }}
+                          style={{ marginTop: '10px', height: 'auto' }}
                           message={
                             <>
                               <div>{claimError}</div>
@@ -498,14 +498,14 @@ export const NameEntryClaim = ({
         Claim {handle && `@${handle}`}
       </ButtonWithFooter>
     </Wrapper>
-  );
-};
+  )
+}
 
 const ButtonWrapper = styled.div`
   display: flex;
   margin-top: 5px;
   justify-content: center;
-`;
+`
 
 const ButtonLight = styled.div`
   border-radius: 5px;
@@ -518,13 +518,13 @@ const ButtonLight = styled.div`
   &:hover {
     background: #ddd;
   }
-`;
+`
 
-const StyledAlert = styled.div``;
+const StyledAlert = styled.div``
 
 const Wrapper = styled.div`
   padding: 10px 28px 28px 28px;
-`;
+`
 
 const Instruction = styled.h2`
   margin-top: 0px;
@@ -535,9 +535,9 @@ const Instruction = styled.h2`
   text-align: center;
   letter-spacing: -0.02em;
   color: #000000;
-`;
+`
 
 const DetailsWrapper = styled.div`
   display: grid;
   grid-row-gap: 28px;
-`;
+`
