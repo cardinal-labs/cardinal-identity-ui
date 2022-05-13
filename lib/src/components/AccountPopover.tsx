@@ -4,7 +4,9 @@ import { rgba } from 'polished'
 import React from 'react'
 import { FaPowerOff, FaTwitter } from 'react-icons/fa'
 
-import { ProfileSmall, useAddressName, useWalletIdentity } from '../'
+import { useAddressName } from '../hooks/useAddressName'
+import { useWalletIdentity } from '../providers/WalletIdentityProvider'
+import { ProfileSmall } from './ProfileSmall'
 
 export const AccountPopover = ({
   connection,

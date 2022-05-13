@@ -2,7 +2,7 @@ import type { Wallet } from '@saberhq/solana-contrib'
 import type { Cluster, Connection } from '@solana/web3.js'
 import React, { useContext, useState } from 'react'
 
-import { ClaimCard } from '..'
+import { ClaimCard } from '../components/ClaimCard'
 import { Modal } from '../modal'
 import { withSleep } from '../utils/transactions'
 

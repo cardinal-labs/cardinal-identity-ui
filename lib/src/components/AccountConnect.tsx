@@ -3,9 +3,9 @@ import type { Cluster, Connection } from '@solana/web3.js'
 import React from 'react'
 import { BiChevronDown } from 'react-icons/bi'
 
-import { ProfileSmall } from '../'
 import { AccountPopover } from './AccountPopover'
 import { Popover } from './Popover'
+import { ProfileSmall } from './ProfileSmall'
 
 export const AccountConnect = ({
   connection,
