@@ -21,6 +21,7 @@
   },
   "scripts": {
     "build": "rm -fr dist/ && tsc && tsc -P tsconfig.esm.json",
+    "postbuild": "NODE_ENV=production tailwindcss build ./styles.css -o dist/esm/styles.css && NODE_ENV=production tailwindcss build ./styles.css -o dist/cjs/styles.css",
     "test": "echo \"Error: no test specified\" && exit 1",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook -o docs -s ./stories/assets"

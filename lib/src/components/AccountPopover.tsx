@@ -29,7 +29,7 @@ export const AccountPopover = ({
   )
   if (!wallet.publicKey) return <></>
   return (
-    <div className="w-screen max-w-[300px] ">
+    <div className="w-screen max-w-[300px]">
       <div
         className="w-11/12 rounded-lg shadow-2xl md:w-full"
         style={{
