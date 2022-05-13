@@ -1,5 +1,3 @@
-import './styles.css'
-
 export * from './components/AccountConnect'
 export * from './components/AccountPopover'
 export * from './components/AddressImage'
