@@ -101,10 +101,11 @@ export const User: FC = () => {
     <div>
       {/* Account linking and wallet connector */}
       <AccountConnect
-        dark={true}
         connection={connection}
-        handleDisconnect={() => wallet.disconnect()}
-        wallet={wallet as Wallet}
+        environment={'mainnet-beta'}
+        dark={true}
+        handleDisconnect={() => wallet.adapter.disconnect()}
+        wallet={wallet.adapter as Wallet}
       />
       {/* Replace address with image */}
       <AddressImage address={wallet.publicKey} connection={connection} />
@@ -113,7 +114,10 @@ export const User: FC = () => {
       {/* Profile from address */}
       <ProfileSmall address={wallet.publicKey} connection={connection} />
       {/* Button to connect twitter profile */}
-      <ConnectTwitterButton connection={connection} wallet={wallet} />
+      <ConnectTwitterButton 
+       connection={connection} 
+       cluster={'mainnet-beta'}
+       wallet={wallet.adapter as Wallet} />
     </div>
   )
 }
