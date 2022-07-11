@@ -1,6 +1,6 @@
 import { withRevokeCertificateV2 } from '@cardinal/certificates'
 import type { AccountData } from '@cardinal/common'
-import type { ReverseEntryData } from '@cardinal/namespaces'
+import { getNameEntry, ReverseEntryData } from '@cardinal/namespaces'
 import {
   withInvalidateExpiredNameEntry,
   withInvalidateExpiredReverseEntry,
@@ -58,10 +58,11 @@ export const useHandleUnlink = (
           }
         )
       }
+      console.log(await getNameEntry(connection, namespaceName, entryName))
       await withInvalidateExpiredNameEntry(transaction, connection, wallet, {
         namespaceName,
         mintId: entryMint,
-        entryName,
+        entryName: entryName,
       })
       transaction.feePayer = wallet.publicKey
       transaction.recentBlockhash = (

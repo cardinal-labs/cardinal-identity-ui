@@ -14,7 +14,6 @@ import { PublicKey } from '@solana/web3.js'
 import { useQuery } from 'react-query'
 
 import { accountDataById } from '../utils/accounts'
-import { TWITTER_NAMESPACE_NAME } from '../utils/constants'
 import { tryPublicKey } from '../utils/format'
 
 export type UserTokenData = {
@@ -33,7 +32,7 @@ export const useUserNamesForNamespace = (
   namespaceName: string
 ) => {
   return useQuery<UserTokenData[]>(
-    ['useUserNamesForNamespace', walletId?.toString()],
+    ['useUserNamesForNamespace', walletId?.toString(), namespaceName],
     async () => {
       if (!walletId) return []
       const [namespaceId] = await findNamespaceId(namespaceName)
@@ -100,7 +99,7 @@ export const useUserNamesForNamespace = (
             ?.symbol === 'NAME' &&
             metaplexData[
               tokenAccount.pubkey.toString()
-            ]?.parsed?.data?.name.includes(TWITTER_NAMESPACE_NAME))
+            ]?.parsed?.data?.name.includes(namespaceName))
       )
 
       // lookup delegates

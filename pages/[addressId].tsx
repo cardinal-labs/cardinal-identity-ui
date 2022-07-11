@@ -5,25 +5,17 @@ import { useWallet } from '@solana/wallet-adapter-react'
 import type { PublicKey } from '@solana/web3.js'
 import { Header } from 'common/Header'
 import { PlaceholderProfile, Profile } from 'components/Profile'
-import { tryPublicKey } from 'lib/src'
+import { tryPublicKey, useWalletIdentity } from 'lib/src'
 import { useRouter } from 'next/router'
 import { useEnvironmentCtx } from 'providers/EnvironmentProvider'
 import { useMemo, useState } from 'react'
-
-export const TwitterBackground = styled.div`
-  z-index: -1;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  background: #1da1f2;
-`
 
 const TwitterClaim = () => {
   const wallet = useWallet()
   const router = useRouter()
   const [address, setAddress] = useState<PublicKey>()
   const { connection } = useEnvironmentCtx()
+  const { linkingFlow } = useWalletIdentity()
   const { addressId } = router.query
 
   useMemo(async () => {
@@ -50,7 +42,10 @@ const TwitterClaim = () => {
   }, [wallet.connected, wallet.publicKey, addressId, router])
 
   return (
-    <>
+    <div
+      className={`fixed h-full w-full`}
+      style={{ background: linkingFlow.colors.primary }}
+    >
       <Header />
       <div style={{ marginTop: '10vh' }}>
         {address ? (
@@ -74,8 +69,7 @@ const TwitterClaim = () => {
           </div>
         )}
       </div>
-      <TwitterBackground />
-    </>
+    </div>
   )
 }
 

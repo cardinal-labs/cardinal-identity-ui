@@ -1,5 +1,5 @@
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   env: {
     MAINNET_PRIMARY: process.env.MAINNET_PRIMARY,
     BASE_CLUSTER: process.env.BASE_CLUSTER,

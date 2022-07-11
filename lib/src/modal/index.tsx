@@ -1,8 +1,10 @@
 import styled from '@emotion/styled'
 import darken from 'polished/lib/color/darken'
 import React, { useEffect, useState } from 'react'
+import { linkingFlows } from '../common/LinkingFlows'
+import { useWalletIdentity } from '../providers/WalletIdentityProvider'
 
-import { CloseIcon } from './icons'
+import { CloseIcon, BackIcon } from './icons'
 
 export interface ModalProps {
   children: React.ReactNode
@@ -10,6 +12,7 @@ export interface ModalProps {
   onDismiss: () => void
   darkenOverlay?: boolean
   hideCloseButton?: boolean
+  hideOtherLinkingFlows?: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -18,8 +21,10 @@ export const Modal: React.FC<ModalProps> = ({
   onDismiss,
   darkenOverlay = true,
   hideCloseButton = false,
+  hideOtherLinkingFlows = false,
 }: ModalProps) => {
   const [mounted, setMounted] = useState(true)
+  const { linkingFlow, setLinkingFlow } = useWalletIdentity()
   useEffect(() => {
     !isOpen
       ? setTimeout(() => {
@@ -46,20 +51,40 @@ export const Modal: React.FC<ModalProps> = ({
           }}
         >
           <TopArea>
-            <div />
-            {hideCloseButton ? (
-              <div />
-            ) : (
-              <ButtonIcon
-                onClick={(e) => {
-                  e.stopPropagation()
-                  e.preventDefault()
-                  onDismiss()
-                }}
-              >
-                <CloseIcon />
-              </ButtonIcon>
-            )}
+            <div
+              className="flex-between flex w-full"
+              style={{
+                justifyContent:
+                  hideOtherLinkingFlows || linkingFlow.name === 'default'
+                    ? 'flex-end'
+                    : 'space-between',
+              }}
+            >
+              {hideOtherLinkingFlows || linkingFlow.name === 'default' ? (
+                <div />
+              ) : (
+                <ButtonIcon
+                  onClick={(e) => {
+                    setLinkingFlow(linkingFlows['default']!)
+                  }}
+                >
+                  <BackIcon />
+                </ButtonIcon>
+              )}
+              {hideCloseButton ? (
+                <div />
+              ) : (
+                <ButtonIcon
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    onDismiss()
+                  }}
+                >
+                  <CloseIcon />
+                </ButtonIcon>
+              )}
+            </div>
           </TopArea>
           {mounted && children}
         </ModalWrapper>

@@ -1,6 +1,10 @@
 import type { AccountData } from '@cardinal/common'
-import type { ReverseEntryData } from '@cardinal/namespaces'
-import { findNamespaceId, getReverseEntry } from '@cardinal/namespaces'
+import {
+  findReverseEntryId,
+  getReverseEntry,
+  ReverseEntryData,
+} from '@cardinal/namespaces'
+import { findNamespaceId } from '@cardinal/namespaces'
 import type { Connection, PublicKey } from '@solana/web3.js'
 import { useQuery } from 'react-query'
 
@@ -17,7 +21,8 @@ export const useReverseEntry = (
       const reverseEntry = await getReverseEntry(
         connection,
         pubkey,
-        namespaceId
+        namespaceId,
+        true
       )
       return reverseEntry || undefined
     },

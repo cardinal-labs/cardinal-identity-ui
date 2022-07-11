@@ -77,7 +77,7 @@ const StyledAlert = styled.div<{
   position: relative;
   display: flex;
   align-items: center;
-  padding: 8px 15px;
+  padding: 8px 9px;
   word-wrap: break-word;
   border-radius: 2px;
   ${({ type = 'info' }) => {

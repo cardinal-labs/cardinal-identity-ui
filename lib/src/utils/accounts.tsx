@@ -33,6 +33,7 @@ import * as spl from '@solana/spl-token'
 import type {
   AccountInfo,
   Connection,
+  GetMultipleAccountsConfig,
   ParsedAccountData,
   PublicKey,
 } from '@solana/web3.js'
@@ -230,7 +231,7 @@ export const accountDataById = async (
   const accountInfos = await getBatchedMultipleAccounts(
     connection,
     filteredIds,
-    { encoding: 'jsonParsed' }
+    { encoding: 'jsonParsed' } as GetMultipleAccountsConfig
   )
   return deserializeAccountInfos(filteredIds, accountInfos)
 }

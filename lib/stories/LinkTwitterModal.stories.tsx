@@ -5,13 +5,13 @@ import { Connection } from '@solana/web3.js'
 import type { ComponentMeta, ComponentStory } from '@storybook/react'
 import React from 'react'
 
-import { ConnectTwitterButton } from '../src/components/ConnectTwitterButton'
+import { ConnectButton } from '../src/components/ConnectButton'
 import { WalletIdentityProvider } from '../src/providers/WalletIdentityProvider'
 import { tryPublicKey } from '../src/utils/format'
 
 export default {
-  title: 'Components/ConnectTwitterButton',
-  component: ConnectTwitterButton,
+  title: 'Components/ConnectButton',
+  component: ConnectButton,
   argTypes: {
     connection: {
       options: ['mainnet', 'devnet', 'testnet'],
@@ -32,10 +32,10 @@ export default {
       control: 'text',
     },
   },
-} as ComponentMeta<typeof ConnectTwitterButton>
+} as ComponentMeta<typeof ConnectButton>
 
 type LinkTwitterModalControls = (
-  props: React.ComponentProps<typeof ConnectTwitterButton> & { address: string }
+  props: React.ComponentProps<typeof ConnectButton> & { address: string }
 ) => JSX.Element
 
 const Template: ComponentStory<LinkTwitterModalControls> = ({ ...args }) => {
@@ -57,7 +57,7 @@ const Template: ComponentStory<LinkTwitterModalControls> = ({ ...args }) => {
                 alignItems: 'center',
               }}
             >
-              <ConnectTwitterButton
+              <ConnectButton
                 variant={args.variant}
                 dev={args.dev}
                 cluster={args.cluster}

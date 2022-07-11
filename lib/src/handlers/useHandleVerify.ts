@@ -7,6 +7,11 @@ import type { Cluster, PublicKey } from '@solana/web3.js'
 import { useMutation } from 'react-query'
 
 import { apiBase } from '../utils/constants'
+import {
+  discordCodeFromUrl,
+  handleFromTweetUrl,
+  tweetIdFromUrl,
+} from '../utils/verification'
 
 export interface HandleSetParam {
   metaplexData?: {
@@ -20,29 +25,56 @@ export interface HandleSetParam {
 export const useHandleVerify = (
   wallet: Wallet,
   cluster: Cluster,
-  dev: boolean
+  dev: boolean,
+  accessToken: string,
+  namespace: string,
+  setAccessToken: (handle: string) => void,
+  setHandle: (handle: string) => void
 ) => {
   return useMutation(
-    [wallet.publicKey.toString()],
     async ({
-      tweetId,
-      handle,
+      verificationUrl,
     }: {
-      tweetId?: string
-      handle?: string
+      verificationUrl?: string
     }): Promise<void> => {
-      if (!handle || !tweetId) return
-      const response = await fetch(
-        `${apiBase(
-          dev
-        )}/namespaces/twitter/verify?tweetId=${tweetId}&publicKey=${wallet?.publicKey.toString()}&handle=${handle}${
-          cluster && `&cluster=${cluster}`
-        }`
-      )
-      const json = await response.json()
-      if (response.status !== 200) throw new Error(json.message)
-      console.log('Verification response: ', json)
-      return
+      if (!verificationUrl) return
+
+      if (verificationUrl.includes('twitter')) {
+        const handle = handleFromTweetUrl(verificationUrl)?.toString()
+        setHandle(handle || '')
+        const tweetId = tweetIdFromUrl(verificationUrl)
+        const response = await fetch(
+          encodeURI(
+            `${apiBase(
+              dev
+            )}/twitter/verify?tweetId=${tweetId}&publicKey=${wallet?.publicKey.toString()}&handle=${handle}&namespace=${namespace}${
+              cluster && `&cluster=${cluster}`
+            }`
+          )
+        )
+        const json = await response.json()
+        if (response.status !== 200) throw new Error(json.message)
+        console.log('Twiiter verification response: ', json)
+      } else if (verificationUrl.includes('discord')) {
+        const code = discordCodeFromUrl(verificationUrl)
+        if (!code) throw new Error('No code found in url')
+        const response = await fetch(
+          encodeURI(
+            `${apiBase(
+              dev
+            )}/twitter/verify?publicKey=${wallet?.publicKey.toString()}&namespace=${namespace}&code=${code}&accessToken=${accessToken}${
+              cluster && `&cluster=${cluster}`
+            }`
+          )
+        )
+        const json = await response.json()
+        if (response.status !== 200) throw new Error(json.message)
+        setHandle(json.info.username || '')
+        setAccessToken(json.info.accessToken || '')
+        console.log('Discord verification response: ', json)
+      } else {
+        throw new Error('Invalid verification URL provided')
+      }
     },
     {
       onError: (e) => {

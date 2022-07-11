@@ -15,13 +15,13 @@ import { useHandleUnlink } from '../handlers/useHandleUnlink'
 import { useReverseEntry } from '../hooks/useReverseEntry'
 import type { UserTokenData } from '../hooks/useUserNamesForNamespace'
 import { useUserNamesForNamespace } from '../hooks/useUserNamesForNamespace'
-import { formatTwitterLink } from '../utils/format'
+import { formatIdentityLink } from '../utils/format'
 import { BoltIcon } from './icons'
 import { StepDetail } from './StepDetail'
 
 export const nameFromMint = (name: string, uri: string): [string, string] => {
   if (uri.includes('name')) {
-    return [name, getQueryParam(uri, 'name') || '']
+    return [name, decodeURIComponent(getQueryParam(uri, 'name') || '')]
   }
   return [breakName(name || '')[0], breakName(name || '')[1]]
 }
@@ -75,11 +75,15 @@ export const NameEntryRow = ({
         className="cursor-point flex cursor-pointer items-center gap-1"
         style={{ fontSize: '14px' }}
       >
-        {formatTwitterLink(
+        {formatIdentityLink(
           nameFromMint(
             userTokenData.metaplexData?.parsed.data.name || '',
             userTokenData.metaplexData?.parsed.data.uri || ''
-          )[1]
+          )[1],
+          nameFromMint(
+            userTokenData.metaplexData?.parsed.data.name || '',
+            userTokenData.metaplexData?.parsed.data.uri || ''
+          )[0]
         )}
         {reverseEntry.data &&
           formatName(namespaceName, reverseEntry.data.parsed.entryName) ===
@@ -163,11 +167,15 @@ export const NameEntryRow = ({
                   setSuccess(
                     <div>
                       Succesfully unlinked{' '}
-                      {formatTwitterLink(
+                      {formatIdentityLink(
                         nameFromMint(
                           userTokenData.metaplexData?.parsed.data.name || '',
                           userTokenData.metaplexData?.parsed.data.uri || ''
-                        )[1]
+                        )[1],
+                        nameFromMint(
+                          userTokenData.metaplexData?.parsed.data.name || '',
+                          userTokenData.metaplexData?.parsed.data.uri || ''
+                        )[0]
                       )}
                       . Changes will be reflected shortly.{' '}
                       <a
@@ -273,6 +281,7 @@ export const NameManager = ({
                 marginTop: '10px',
                 height: 'auto',
                 wordBreak: 'break-word',
+                justifyContent: 'center',
               }}
               message={
                 <>
@@ -289,6 +298,7 @@ export const NameManager = ({
                 marginTop: '10px',
                 height: 'auto',
                 wordBreak: 'break-word',
+                justifyContent: 'center',
               }}
               message={
                 <>
@@ -305,6 +315,7 @@ export const NameManager = ({
                 marginTop: '10px',
                 height: 'auto',
                 wordBreak: 'break-word',
+                justifyContent: 'center',
               }}
               message={success}
               type="success"

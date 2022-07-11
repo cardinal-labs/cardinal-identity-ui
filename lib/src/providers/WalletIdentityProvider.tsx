@@ -1,10 +1,11 @@
 import type { Wallet } from '@saberhq/solana-contrib'
 import type { Cluster, Connection } from '@solana/web3.js'
-import React, { useContext, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 import { ClaimCard } from '..'
+import { LinkingFlow, linkingFlows } from '../common/LinkingFlows'
 import { Modal } from '../modal'
 import { withSleep } from '../utils/transactions'
 
@@ -22,6 +23,8 @@ export type ShowParams = {
 
 export interface WalletIdentity {
   show: (arg: ShowParams) => void
+  linkingFlow: LinkingFlow
+  setLinkingFlow: Dispatch<SetStateAction<LinkingFlow>>
   handle?: string
   wallet?: Wallet
   connection?: Connection
@@ -36,12 +39,15 @@ export const WalletIdentityContext = React.createContext<WalletIdentity | null>(
 )
 
 interface Props {
+  linkingFlowKey?: string
   appName?: string
   appTwitter?: string
+  flows?: 'discord' | 'twitter'[]
   children: React.ReactNode
 }
 
 export const WalletIdentityProvider: React.FC<Props> = ({
+  linkingFlowKey,
   appName,
   appTwitter,
   children,
@@ -55,6 +61,9 @@ export const WalletIdentityProvider: React.FC<Props> = ({
   const [onClose, setOnClose] = useState<(() => void) | undefined>()
   const [showIdentityModal, setShowIdentityModal] = useState<boolean>(false)
   const [handle, setHandle] = useState<string | undefined>(undefined)
+  const [linkingFlow, setLinkingFlow] = useState<LinkingFlow>(
+    linkingFlows[linkingFlowKey!] || linkingFlows['default']!
+  )
 
   return (
     <WalletIdentityContext.Provider
@@ -83,6 +92,8 @@ export const WalletIdentityProvider: React.FC<Props> = ({
         cluster,
         dev,
         showIdentityModal,
+        linkingFlow,
+        setLinkingFlow,
       }}
     >
       <QueryClientProvider client={new QueryClient()}>
@@ -101,6 +112,7 @@ export const WalletIdentityProvider: React.FC<Props> = ({
             connection={connection}
             secondaryConnection={secondaryConnection}
             appName={appName}
+            namespaceName={linkingFlow.name}
             appTwitter={appTwitter}
             showManage={showManageDefault}
             onComplete={(handle: string) => {

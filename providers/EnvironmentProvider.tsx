@@ -5,6 +5,23 @@ import type { NextPageContext } from 'next'
 import { useRouter } from 'next/router'
 import React, { useContext, useMemo, useState } from 'react'
 
+export const getInitialProps = async ({
+  ctx,
+}: {
+  ctx: NextPageContext
+}): Promise<{ cluster: string; linkingFlowKey: string }> => {
+  const host = ctx.query.linkingFlow || ctx.req?.headers.host
+  const cluster = host?.includes('dev')
+    ? 'devnet'
+    : (ctx.query.project || ctx.query.host)?.includes('test')
+    ? 'testnet'
+    : ctx.query.cluster || process.env.BASE_CLUSTER
+  return {
+    cluster: firstParam(cluster),
+    linkingFlowKey: host?.toString() || 'default',
+  }
+}
+
 export interface Environment {
   label: Cluster
   primary: string
@@ -36,22 +53,6 @@ export const ENVIRONMENTS: Environment[] = [
 
 const EnvironmentContext: React.Context<null | EnvironmentContextValues> =
   React.createContext<null | EnvironmentContextValues>(null)
-
-export const getInitialProps = async ({
-  ctx,
-}: {
-  ctx: NextPageContext
-}): Promise<{ cluster: string }> => {
-  const host = ctx.req?.headers.host || ctx.query.host
-  const cluster = host?.includes('dev')
-    ? 'devnet'
-    : (ctx.query.project || ctx.query.host)?.includes('test')
-    ? 'testnet'
-    : ctx.query.cluster || process.env.BASE_CLUSTER
-  return {
-    cluster: firstParam(cluster),
-  }
-}
 
 export function EnvironmentProvider({
   children,

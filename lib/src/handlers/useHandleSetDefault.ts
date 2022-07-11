@@ -46,7 +46,8 @@ export const useHandleSetDefault = (
           entryMint,
           transaction
         )
-      } else if (tokenData.tokenManager) {
+      }
+      if (tokenData.tokenManager) {
         await withSetNamespaceReverseEntry(
           transaction,
           connection,

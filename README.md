@@ -113,7 +113,7 @@ export const User: FC = () => {
       {/* Profile from address */}
       <ProfileSmall address={wallet.publicKey} connection={connection} />
       {/* Button to connect twitter profile */}
-      <ConnectTwitterButton connection={connection} wallet={wallet} />
+      <ConnectButton connection={connection} wallet={wallet} />
     </div>
   )
 }
